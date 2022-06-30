@@ -11,6 +11,61 @@ $veryDarkGray: hsl(0, 0%, 27%);
     src: url("../public/Fonts/League_Spartan/static/LeagueSpartan-SemiBold.ttf");
 }
 
+@keyframes headerFromLeft {
+	0% {
+	  transform: translateX(-100%);
+	}
+	100% {
+	  transform: translateX(0);
+	}
+}
+
+@keyframes caseFromLeft {
+	0% {
+	  transform: translateX(-100%);
+	}
+	100% {
+	  transform: translateX(0);
+	}
+}
+
+@keyframes caseFromRight {
+	0% {
+	  transform: translateX(100%);
+	}
+	100% {
+	  transform: translateX(0);
+	}
+}
+
+@keyframes arrowFromRight {
+	0% {
+	  transform: translateX(1000%);
+	}
+	100% {
+	  transform: translateX(0);
+	}
+}
+
+@keyframes caseFromBottom {
+	0% {
+	  transform: translateY(100%);
+	}
+	100% {
+	  transform: translateY(0);
+	}
+}
+
+@keyframes arrowFromTop {
+	0% {
+	  transform: translateY(-1000%);
+	}
+	100% {
+	  transform: translateY(0);
+	}
+}
+
+
 .container-room {
   height: 100vh;
   width: 100vw;
@@ -28,6 +83,8 @@ $veryDarkGray: hsl(0, 0%, 27%);
 	justify-content: space-around;
 	font-family: LeagueSpartanBold;
 	align-items: center;
+	animation: 2s ease-out 0s 1 headerFromLeft;
+  
 
 	:first-child {
 		margin-right: 30px;
@@ -69,9 +126,10 @@ $veryDarkGray: hsl(0, 0%, 27%);
 	grid-template-rows: repeat(14, 1fr);
 	position: relative;
 
-    :nth-child(1) {
-	  grid-column: 1 / 13;
-	  grid-row: 1 / 10;
+    .first-case {
+		grid-column: 1 / 13;
+		grid-row: 1 / 10;
+		animation: 2s ease-out 0s 1 caseFromLeft;
     }
 
 	.arraw-case-left {
@@ -87,6 +145,7 @@ $veryDarkGray: hsl(0, 0%, 27%);
 		align-items: center;
 		background-color: black;
 		cursor: pointer;
+		animation: 3s ease-out 0s 1 arrowFromTop;
 	}
 	.arraw-case-left:hover {
 		background-color: $veryDarkGray;
@@ -105,6 +164,7 @@ $veryDarkGray: hsl(0, 0%, 27%);
 		align-items: center;
 		background-color: black;
 		cursor: pointer;
+		animation: 3s ease-out 0s 1 arrowFromRight;
 	}
 	.arraw-case-right:hover {
 		background-color: $veryDarkGray;
@@ -123,6 +183,7 @@ $veryDarkGray: hsl(0, 0%, 27%);
 		:first-child {
   			font-family: LeagueSpartanBold;
 			font-size: 40px;
+			animation: 2s ease-out 0s 1 caseFromRight;
 		}
 
 		p {
@@ -131,6 +192,7 @@ $veryDarkGray: hsl(0, 0%, 27%);
 
 		p:not(:last-child) {
 			color: $darkGray;
+			animation: 2s ease-out 0s 1 caseFromRight;
 		}
 
 		:last-child {
@@ -138,6 +200,7 @@ $veryDarkGray: hsl(0, 0%, 27%);
 			letter-spacing: 15px;
 			font-family: LeagueSpartanBold;
 			cursor: pointer;
+			animation: 3s ease-out 0s 1 arrowFromRight;
 		}
 
 		:last-child::after {
@@ -154,11 +217,12 @@ $veryDarkGray: hsl(0, 0%, 27%);
 		}
 
     }
-    :nth-child(5) {
+    .third-case {
 		grid-column: 1 / 7;
 		grid-row: 10 / 15;
+		animation: 2s ease-out 0s 1 caseFromLeft;
     }
-    .fourth-class {
+    .fourth-case {
 		grid-column: 7 / 15;
 		grid-row: 10 / 15;
 		float: left;
@@ -167,6 +231,7 @@ $veryDarkGray: hsl(0, 0%, 27%);
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: center;
+		animation: 2s ease-out 0s 1 caseFromBottom;
 		
 		h2 {
 			text-transform: uppercase;
@@ -180,9 +245,10 @@ $veryDarkGray: hsl(0, 0%, 27%);
 			color: $darkGray;
 		}
     }
-    :nth-child(7) {
+    .fifth-case {
 		grid-column: 15 / 21;
 		grid-row: 10 / 15;
+		animation: 2s ease-out 0s 1 caseFromRight;
     }
 
 	.img {

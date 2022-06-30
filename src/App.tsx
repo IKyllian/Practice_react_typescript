@@ -49,7 +49,7 @@ function App() {
 			<p>contact</p>
 		</header>
       <div className='grid-room'>
-        <div>
+        <div className='first-case'>
         	<img className='img' src={caroussel_datas[index].img} alt="first img"></img>
         </div>
 
@@ -67,16 +67,16 @@ function App() {
             <p> shop now </p>         
         </div>
 
-        <div>
+        <div className='third-case'>
 			<img className='img' src={Image1} alt="first img"></img>
         </div>
 
-        <div className='fourth-class'>
+        <div className='fourth-case'>
 			<h2> about our fourniture</h2>
             <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. In egestas faucibus diam, et consequat orci semper non. Pellentesque efficitur felis a cursus porttitor. Cras lacinia at orci a euismod. Aenean elementum commodo lacinia. Nullam egestas a lorem quis molestie.</p>
         </div>
 
-        <div>
+        <div className='fifth-case'>
 			<img className='img' src={Image2} alt="first img"></img>
         </div>
 
