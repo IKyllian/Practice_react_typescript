@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
-import "./App.scss";
-import Caroussel_Img1 from "./Images/desktop-image-hero-1.jpg"
-import Caroussel_Img2 from "./Images/desktop-image-hero-2.jpg"
-import Caroussel_Img3 from "./Images/desktop-image-hero-3.jpg"
-import Image1 from "./Images/image-about-dark.jpg"
-import Image2 from "./Images/image-about-light.jpg"
+import React, { ReactElement, useState } from 'react';
+import Caroussel_Img1 from "../../Images/desktop-image-hero-1.jpg"
+import Caroussel_Img2 from "../../Images/desktop-image-hero-2.jpg"
+import Caroussel_Img3 from "../../Images/desktop-image-hero-3.jpg"
+import Image1 from "../../Images/image-about-dark.jpg"
+import Image2 from "../../Images/image-about-light.jpg"
 
-const caroussel_datas = [
+type carousel = {
+	img: string,
+	title: string,
+	text: string
+}
+
+// const caroussel_datas: Array<carousel> = [
+const caroussel_datas: carousel[] = [
 	{
 		img: Caroussel_Img1,
 		title: "Discover innovative ways to decorate",
@@ -23,32 +29,32 @@ const caroussel_datas = [
 	}
 ]
 
-function App() {
+function RoomHomepage() {
 	const [index, setIndex] = useState(0);
 	const [headerIsOpen, setHeaderIsOpen] = useState(0);
 
-	const toNext = () => {
+	const toNext = (): void => {
 		if (index < caroussel_datas.length - 1)
 			setIndex(index + 1);
 		else
 			setIndex(0);
 	}
 
-	const toPrevious = () => {
+	const toPrevious = (): void => {
 		if (index === 0)
 			setIndex(caroussel_datas.length - 1);
 		else	
 			setIndex(index - 1);
 	}
 
-	const burgerOnClick = () => {
+	const burgerOnClick = (): void => {
 		if (headerIsOpen == 0)
 			setHeaderIsOpen(1);
 		else
 			setHeaderIsOpen(0);
 	}
 
-	const renderResponsiveHeader = () => {
+	const renderResponsiveHeader = (): ReactElement => {
 		if (!headerIsOpen) {
 			return (
 				<header className='header-responsive'>
@@ -127,4 +133,4 @@ function App() {
   );
 }
 
-export default App;
+export default RoomHomepage;

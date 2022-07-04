@@ -1,7 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.scss';
-import App from './App';
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+
+import './Styles/index.scss';
+import "./Styles/Home.scss";
+import "./Styles/RoomHomepage.scss";
+
+import Home from './Components/Home'
+import RoomHomepage from './Components/RoomHomepage/RoomHomepage';
+import TodoApp from './Components/Todo-App/Todo-App';
+
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -9,7 +17,13 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+    <Routes>
+      <Route path='/' element={ <Home /> } />
+      <Route path='/room-homepage' element={ <RoomHomepage /> }/>
+      <Route path='/todo-app' element={ <TodoApp /> }/>
+    </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
