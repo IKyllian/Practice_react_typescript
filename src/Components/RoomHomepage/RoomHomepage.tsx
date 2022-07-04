@@ -1,9 +1,9 @@
 import React, { ReactElement, useState } from 'react';
-import Caroussel_Img1 from "../../Images/desktop-image-hero-1.jpg"
-import Caroussel_Img2 from "../../Images/desktop-image-hero-2.jpg"
-import Caroussel_Img3 from "../../Images/desktop-image-hero-3.jpg"
-import Image1 from "../../Images/image-about-dark.jpg"
-import Image2 from "../../Images/image-about-light.jpg"
+import Caroussel_Img1 from "../../Images/RoomHomepage/desktop-image-hero-1.jpg"
+import Caroussel_Img2 from "../../Images/RoomHomepage/desktop-image-hero-2.jpg"
+import Caroussel_Img3 from "../../Images/RoomHomepage/desktop-image-hero-3.jpg"
+import Image1 from "../../Images/RoomHomepage/image-about-dark.jpg"
+import Image2 from "../../Images/RoomHomepage/image-about-light.jpg"
 
 type carousel = {
 	img: string,

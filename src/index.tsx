@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 import './Styles/index.scss';
-import "./Styles/Home.scss";
-import "./Styles/RoomHomepage.scss";
 
 import Home from './Components/Home'
 import RoomHomepage from './Components/RoomHomepage/RoomHomepage';
@@ -19,9 +17,10 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
     <Routes>
-      <Route path='/' element={ <Home /> } />
+
+      <Route path='/' element={ <TodoApp /> }/>
+      {/* <Route path='/' element={ <Home /> } /> */}
       <Route path='/room-homepage' element={ <RoomHomepage /> }/>
-      <Route path='/todo-app' element={ <TodoApp /> }/>
     </Routes>
     </BrowserRouter>
   </React.StrictMode>

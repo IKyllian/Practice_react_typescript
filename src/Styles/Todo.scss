@@ -1,0 +1,160 @@
+
+$BrightBlue: hsl(220, 98%, 61%);
+$CheckBackground: linear-gradient(hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+
+// Dark Theme
+$VeryDarkBlue: hsl(235, 21%, 11%);
+$VeryDarkDesaturatedBlue: hsl(235, 24%, 19%);
+$LightGrayishBlue: hsl(234, 39%, 85%);
+$LightGrayishBlueHover: hsl(236, 33%, 92%);
+$DarkGrayishBlue: hsl(234, 11%, 52%);
+$VeryDarkGrayishBlue: hsl(233, 14%, 35%);
+$VeryDarkGrayishBlue: hsl(237, 14%, 26%);
+
+// Light Theme
+$VeryLightGray: hsl(0, 0%, 98%);
+$VeryLightGrayishBlue: hsl(236, 33%, 92%);
+$LightGrayishBlue: hsl(233, 11%, 84%);
+$DarkGrayishBlue: hsl(236, 9%, 61%);
+$VeryDarkGrayishBlue: hsl(235, 19%, 35%);
+
+$MargeListItems: 15px;
+
+@font-face {
+    font-family: JosefinSans;
+    src: url("../../public/Fonts/Josefin_Sans/static/JosefinSans-Regular.ttf");
+}
+
+.todo-page-container {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    background-color: $VeryDarkBlue;
+    font-family: JosefinSans;
+
+    .todo-img {
+        z-index: 0;
+        position: absolute;
+        width: 100%;
+    }
+
+    .todo-component-container{
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        gap: 50px;
+        width: 35%;
+        height: 100%;
+
+        .header-todo-component {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            :last-child {
+                cursor: pointer;
+            }
+        }
+        .header-todo-component:first-child {
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 20px;
+        }
+
+        .todo-list-container {
+            width: 100%;
+            position: relative;
+
+            .todo-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                color: $LightGrayishBlue;
+
+                li {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    height: 50px;
+                    background-color: $VeryDarkDesaturatedBlue;
+
+                    .circle-check {
+                        margin-left: $MargeListItems;
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        border: 1px solid $DarkGrayishBlue;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .circle-check-active {
+                        background: $CheckBackground;
+                    }
+
+                    p {
+                        margin-left: $MargeListItems;
+                        cursor: pointer;
+                    }
+
+                    .todo-completed {
+                        text-decoration: line-through;
+                    }
+
+                    form {
+                        width: 100%;
+
+                        label {
+                            width: 100%;
+                            display: flex;
+
+                            input {
+                                all: unset;
+                                cursor: pointer;
+                                width: 80%;
+                                margin-left: $MargeListItems;
+                                color: $DarkGrayishBlue;
+                            }
+                        }
+                    }
+                }
+
+                li:first-child {
+                    margin-bottom: 30px;
+                }
+
+                li:last-child {
+                    font-size: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                
+                    :last-child {
+                        margin-right: $MargeListItems;
+                    }
+
+                    .filters {
+                        display: flex;
+                    }
+                }  
+
+                li:not(:last-child, :first-child) {
+                    border-bottom: 1px solid $VeryDarkGrayishBlue;
+                }
+            }
+        }
+
+        .footer {
+            font-size: 10px;
+            color: $DarkGrayishBlue;
+        }
+    }
+    
+}
