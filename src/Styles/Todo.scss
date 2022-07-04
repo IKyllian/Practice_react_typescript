@@ -132,7 +132,7 @@ $MargeListItems: 15px;
                 }
 
                 li:last-child {
-                    font-size: 10px;
+                    font-size: 12px;
                     display: flex;
                     justify-content: space-between;
                 
@@ -142,6 +142,10 @@ $MargeListItems: 15px;
 
                     .filters {
                         display: flex;
+                    }
+
+                    .filter-active {
+                        color: $BrightBlue;
                     }
                 }  
 

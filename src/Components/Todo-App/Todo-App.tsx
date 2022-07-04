@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 import ImageBackground from "../../Images/Todo-App/bg-desktop-dark.jpg"
 import TodoItem from "./TodoItem"
 
@@ -13,6 +13,7 @@ function TodoApp() {
     const [newTodoActive, setNewTodoActive] = useState<boolean>(false);
     const [todos, setTodos] = useState<TodoDatas[]>([]);
     const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+    const [filter, setFilter] = useState<string | null>("all");
 
     const handleSubmit = (event: React.SyntheticEvent): void => {
         event.preventDefault();
@@ -56,6 +57,22 @@ function TodoApp() {
     const removeCompletedElements = (): void => {
         setTodos(todos.filter((element: TodoDatas) => element.isComplete == false));
     }
+
+    const displayTodoList = (): React.ReactNode[] => {
+        if (filter == "all") {
+            return(
+                todos.map((element: TodoDatas, index: number) =>
+                    <TodoItem key={index} element={element} index={index} handleActive={handleActive} handleComplete={handleComplete} />
+                )
+            )
+        } else {
+            return (
+                todos.filter((element: TodoDatas) => filter === "active" ? element.isActive === true : element.isComplete === true).map((element: TodoDatas, index) =>
+                    <TodoItem key={index} element={element} index={index} handleActive={handleActive} handleComplete={handleComplete} />
+                )
+            )
+        }
+    }
     
     return (
         <div className='todo-page-container'>
@@ -85,17 +102,13 @@ function TodoApp() {
                                 </label>
                             </form>
                         </li>
-                        {
-                            todos.map((element: TodoDatas, index: number) =>
-                                <TodoItem element={element} index={index} handleActive={handleActive} handleComplete={handleComplete} />
-                            )
-                        }
+                        {displayTodoList()}
                         <li>
                             <p> {itemsLeft()} items left </p>
                             <div className='filters'>
-                                <p> All </p>
-                                <p> Active </p>
-                                <p> Completed </p>
+                                <p className={`${filter === "all" ? "filter-active" : ""}`} onClick={() => setFilter("all")}>All</p>
+                                <p className={`${filter === "active" ? "filter-active" : ""}`} onClick={() => setFilter("active")}> Active </p>
+                                <p className={`${filter === "completed" ? "filter-active" : ""}`} onClick={() => setFilter("completed")}> Completed </p>
                             </div>
                             <p onClick={removeCompletedElements}> Clear Completed </p>
                         </li>
