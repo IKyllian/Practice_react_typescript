@@ -92,6 +92,26 @@ $MargeListItems: 15px;
                 padding: 0;
                 margin: 0;
                 
+                .li-form {
+                    margin-bottom: 30px;
+                    form {
+                        width: 100%;
+
+                        label {
+                            width: 100%;
+                            display: flex;
+
+                            input {
+                                all: unset;
+                                cursor: pointer;
+                                width: 80%;
+                                margin-left: $MargeListItems;
+                                color: $DarkGrayishBlue;
+                            }
+                        }
+                    }
+                }
+
                 .li-dark {
                     background-color: $VeryDarkDesaturatedBlue;
                 }
@@ -138,23 +158,6 @@ $MargeListItems: 15px;
                     .todo-completed {
                         text-decoration: line-through;
                     }
-
-                    form {
-                        width: 100%;
-
-                        label {
-                            width: 100%;
-                            display: flex;
-
-                            input {
-                                all: unset;
-                                cursor: pointer;
-                                width: 80%;
-                                margin-left: $MargeListItems;
-                                color: $DarkGrayishBlue;
-                            }
-                        }
-                    }
                 }
 
                 li:hover {
@@ -163,11 +166,7 @@ $MargeListItems: 15px;
                     }
                 }
 
-                li:first-child {
-                    margin-bottom: 30px;
-                }
-
-                li:last-child {
+                .footer-list {
                     font-weight: bold;
                     color: $DarkGrayishBlue;
                     font-size: 12px;
@@ -187,10 +186,10 @@ $MargeListItems: 15px;
                     }
                 }  
 
-                .li-dark:not(:last-child, :first-child) {
+                .li-dark:not(.footer-list, .li-form) {
                     border-bottom: 1px solid $VeryDarkGrayishBlue;
                 }
-                .li-light:not(:last-child, :first-child) {
+                .li-light:not(.footer-list, .li-form) {
                     border-bottom: 1px solid $LightGrayishBlue;
                 }
             }
