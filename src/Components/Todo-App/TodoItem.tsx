@@ -11,11 +11,12 @@ type Props = {
     index: number,
     handleActive: Function,
     handleComplete: Function,
+    theme: string,
 }
 
-const TodoItem: React.FC<Props> = ({element, index, handleActive, handleComplete}) => {
+const TodoItem: React.FC<Props> = ({element, index, handleActive, handleComplete, theme}) => {
     return (
-        <li>
+        <li className={`li-${theme}`}>
             <div className={`circle-check ${element.isActive === true ? "circle-check-active" : ""}`} onClick={() => handleActive(index)}>
                 {
                     element.isActive === true &&

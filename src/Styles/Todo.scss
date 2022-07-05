@@ -25,11 +25,18 @@ $MargeListItems: 15px;
     src: url("../../public/Fonts/Josefin_Sans/static/JosefinSans-Regular.ttf");
 }
 
+.todo-page-container-dark {
+    background-color: $VeryDarkBlue;
+}
+
+.todo-page-container-light {
+    background-color: $VeryLightGrayishBlue;
+}
+
 .todo-page-container {
     height: 100vh;
     width: 100vw;
     position: relative;
-    background-color: $VeryDarkBlue;
     font-family: JosefinSans;
 
     .todo-img {
@@ -46,7 +53,8 @@ $MargeListItems: 15px;
         justify-content: center;
         margin: 0 auto;
         gap: 50px;
-        width: 35%;
+        // width: 35%;
+        width: 510px;
         height: 100%;
 
         .header-todo-component {
@@ -71,18 +79,32 @@ $MargeListItems: 15px;
             width: 100%;
             position: relative;
 
+            .todo-list-dark {
+                color: $LightGrayishBlue;
+            }
+
+            .todo-list-light {
+                color: $VeryDarkGrayishBlue;
+            }
+
             .todo-list {
                 list-style: none;
                 padding: 0;
                 margin: 0;
-                color: $LightGrayishBlue;
+                
+                .li-dark {
+                    background-color: $VeryDarkDesaturatedBlue;
+                }
+
+                .li-light {
+                    background-color: $VeryLightGray;
+                }
 
                 li {
                     display: flex;
                     align-items: center;
                     width: 100%;
                     height: 50px;
-                    background-color: $VeryDarkDesaturatedBlue;
 
                     .circle-check {
                         margin-left: $MargeListItems;
@@ -132,6 +154,8 @@ $MargeListItems: 15px;
                 }
 
                 li:last-child {
+                    font-weight: bold;
+                    color: $DarkGrayishBlue;
                     font-size: 12px;
                     display: flex;
                     justify-content: space-between;
@@ -140,7 +164,7 @@ $MargeListItems: 15px;
                         margin-right: $MargeListItems;
                     }
 
-                    .filters {
+                    .filters { 
                         display: flex;
                     }
 
@@ -149,8 +173,11 @@ $MargeListItems: 15px;
                     }
                 }  
 
-                li:not(:last-child, :first-child) {
+                .li-dark:not(:last-child, :first-child) {
                     border-bottom: 1px solid $VeryDarkGrayishBlue;
+                }
+                .li-light:not(:last-child, :first-child) {
+                    border-bottom: 1px solid $LightGrayishBlue;
                 }
             }
         }
@@ -161,4 +188,12 @@ $MargeListItems: 15px;
         }
     }
     
+}
+
+@media screen and (max-width: 620px) {
+	.todo-page-container {
+        .todo-component-container {
+            max-width: 450px;
+        }
+    }
 }
