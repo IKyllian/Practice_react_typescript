@@ -127,6 +127,14 @@ $MargeListItems: 15px;
                         cursor: pointer;
                     }
 
+                    .delete-item {
+                        position: absolute;
+                        right: 0;
+                        margin-right: $MargeListItems;
+                        display: none;
+                        cursor: pointer;
+                    }
+
                     .todo-completed {
                         text-decoration: line-through;
                     }
@@ -146,6 +154,12 @@ $MargeListItems: 15px;
                                 color: $DarkGrayishBlue;
                             }
                         }
+                    }
+                }
+
+                li:hover {
+                    .delete-item {
+                        display: block;
                     }
                 }
 
