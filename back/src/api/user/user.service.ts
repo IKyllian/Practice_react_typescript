@@ -5,6 +5,7 @@ import { CreateUserDto } from './user.dto';
 import { CreateTodoDto } from '../todo/todo.dto';
 import { User } from './user.entity';
 import { Todo } from '../todo/todo.entity';
+import { TodoService } from '../todo/todo.service'
 
 @Injectable()
 export class UserService {
@@ -15,13 +16,13 @@ export class UserService {
     return this.repository.findOneBy({id: id});
   }
 
-  // public clearUsers(): void {
-  //   this.repository.clear();
-  //   console.log("Clear");
-  // }
+  public getTodos(id: number): Promise<User> {
+	  return this.repository.findOne({where: {id: id}, relations: ["todos"] });
+  }
 
-  public getTodos(id: number): Promise<Todo[]> {
-    return this.repository.findOneBy({id: id}).then((user: User) => (user.todos));
+  public switchPos(srcPos: number, destPost: number, userId: number, todo_service: TodoService): Promise<User> {
+    todo_service.switchPos(srcPos, destPost, userId);
+    return this.repository.findOne({where: {id: userId}, relations: ["todos"] });
   }
 
   public createUser(body: CreateUserDto): Promise<User> {
@@ -34,16 +35,12 @@ export class UserService {
     return this.repository.save(user);
   }
 
-  public async addTodo(id: number, body: CreateTodoDto): Promise<Todo> {
-    const todo: Todo = new Todo();
-
-    todo.content = body.content;
-    todo.isActive = body.isActive;
-    todo.isComplete = body.isComplete;
-
-    return await this.repository.findOneBy({id: id}).then((user: User) => {
-      // Check si la todo existe déjà
-        return user.todos[user.todos.push(todo) - 1];
+  public async addTodo(id: number, body: CreateTodoDto, todo_service: TodoService): Promise<Todo> {
+    return await this.repository.findOneBy({id: id}).then(async(user: User) => {
+      return todo_service.createTodo(body, user, await this.repository.findOne({where: {id: id}, relations: ["todos"] }).then((user) =>  {return user.todos.length}));
+    }).catch((err: any): Promise<any> => {
+      console.log(err);
+      return (err);
     })
   }
 }

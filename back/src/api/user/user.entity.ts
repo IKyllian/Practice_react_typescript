@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Todo } from '../todo/todo.entity';
 
 @Entity()
@@ -15,8 +15,9 @@ export class User {
   @Column({ type: 'boolean', default: false })
   public isDeleted: boolean;
 
-  @Column((Todo) => Todo, {array: true})
+  @OneToMany(() => Todo, (todo) => todo.user)
   public todos: Todo[];
+
 
   /*
    * Create and Update Date Columns

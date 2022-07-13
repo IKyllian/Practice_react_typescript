@@ -1,10 +1,16 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, isBoolean, IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateTodoDto {
   @IsString()
   @IsNotEmpty()
-  public content: string;
+  content: string;
 
-  public isActive: boolean;
-  public isComplete: boolean;
+  @IsBoolean()
+  isActive: boolean;
+  
+  @IsNumber()
+  public pos: number;
+
+  @IsBoolean()
+  isComplete: boolean;
 }

@@ -1,37 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import ImageBackgroundDark from "../../Images/Todo-App/bg-desktop-dark.jpg"
 import ImageBackgroundLight from "../../Images/Todo-App/bg-desktop-light.jpg"
 import TodoItem from "./TodoItem"
 
 type TodoDatas = {
+    id: number,
     content: string,
     isActive: boolean,
     isComplete: boolean,
-    // createdAt: Date,
-    // updatedAt: Date,
+    pos: number,
+    createdAt: Date,
+    updatedAt: Date,
 }
 
 type User = {
     id: number,
     name: string,
     email: string,
+    pos: number,
     isDeleted: boolean,
     createdAt: Date,
     updatedAt: Date,
+    todos: TodoDatas[],
 }
 
-// type User = {
-//     id: number,
-//     name: string,
-//     email: string,
-//     isDeleted: boolean,
-//     createdAt: Date,
-//     updatedAt: Date,
-//     todos: TodoDatas[],
-// }
-
 function TodoApp() {
+    const [todoUpdate, setTodoUpdate] = useState<number>(0);
     const [newTodo, setNewTodo] = useState<string>("");
     const [newTodoActive, setNewTodoActive] = useState<boolean>(false);
     const [todos, setTodos] = useState<TodoDatas[]>([]);
@@ -40,30 +35,64 @@ function TodoApp() {
 
     const handleSubmit = (event: React.SyntheticEvent): void => {
         event.preventDefault();
+        console.log(todos.length);
         if (newTodo != "" && (todos.filter((element: TodoDatas) => element.content === newTodo)).length <= 0) {
-            setTodos([...todos, {content: newTodo, isActive: newTodoActive, isComplete: false}]);
-            setNewTodo("");
+            fetch("http://localhost:3000/user/addTodo/2", {    
+            method: 'PUT',
+            body: JSON.stringify({
+                content: newTodo,
+                isActive: newTodoActive,
+                isComplete: false,
+                pos: todos.length,
+            }),
+            headers: {
+                'Content-type': "application/json",
+            }
+            })
+            .then((response) => {
+                console.log(response);
+                return response.json();
+            })
+            .then((datas: TodoDatas) => {
+                console.log(datas);
+                setTodoUpdate(todoUpdate + 1);
+                setNewTodo("");
+                setNewTodoActive(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         }
     }
 
     const handleActive: Function = (index: number): void => {
-        let newArray: TodoDatas[]  = [...todos];
-
-        if (todos[index].isActive === true)
-            newArray[index].isActive = false;
-        else
-            newArray[index].isActive = true;
-        setTodos(newArray);
+        fetch(`http://localhost:3000/todo/updateActiveStatus/${todos[index].id}`, {    
+            method: 'POST',
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((datas: TodoDatas) => {
+            setTodoUpdate(todoUpdate + 1);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     const handleComplete: Function = (index: number): void => {
-        let newArray: TodoDatas[] = [...todos];
-
-        if (todos[index].isComplete === true)
-            newArray[index].isComplete = false;
-        else
-            newArray[index].isComplete = true;
-        setTodos(newArray);
+        fetch(`http://localhost:3000/todo/updateCompleteStatus/${todos[index].id}`, {    
+            method: 'POST',
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((datas: TodoDatas) => {
+            setTodoUpdate(todoUpdate + 1);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     const itemsLeft = (): number => {
@@ -71,7 +100,18 @@ function TodoApp() {
     }
 
     const removeCompletedElements = (): void => {
-        setTodos(todos.filter((element: TodoDatas) => element.isComplete == false));
+        fetch(`http://localhost:3000/todo/deleteCompletedTodo/2`, {    
+            method: 'DELETE',
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((datas: TodoDatas) => {
+            setTodoUpdate(todoUpdate + 1);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     const displayTodoList = (): React.ReactNode[] => {
@@ -91,9 +131,24 @@ function TodoApp() {
     }
 
     const removeItem = (index: number): void => {
-        let newArray: TodoDatas[] = [...todos];
-        newArray.splice(index, 1);
-        setTodos(newArray);
+        fetch(`http://localhost:3000/todo/deleteTodo/${todos[index].id}`, {    
+            method: 'DELETE',
+            body: JSON.stringify({
+                clientId: 2
+            }),
+            headers: {
+                'Content-type': "application/json",
+            }
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((datas: TodoDatas) => {
+            setTodoUpdate(todoUpdate + 1);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     const reorderItems = (sourceIdx: number, destIdx: number | undefined):void => {
@@ -102,42 +157,54 @@ function TodoApp() {
         let newArray: TodoDatas[] = [...todos];
         newArray.splice(destIdx, 0, newArray.splice(sourceIdx, 1)[0]);
         setTodos(newArray);
-        console.log(todos);
-    }
-
-    function fetchUser() {
-    //    const response = await fetch("http://localhost:3000/user/2");
-
-    //     type JSONResponse = {
-    //         data?: {
-    //         pokemon: Omit<User, 'fetchedAt'>
-    //         }
-    //         errors?: Array<{message: string}>
-    //     }
-
-    //     const user: JSONResponse = await response.json()
-    //     console.log(user);
-    //     return (user);
-
-        fetch("http://localhost:3000/user/2")
+        fetch(`http://localhost:3000/user/switchPos/2`, {    
+            method: 'POST',
+            body: JSON.stringify({
+                srcPos: sourceIdx,
+                destPos: destIdx,
+            }),
+            headers: {
+                'Content-type': "application/json",
+            }
+        })
         .then((response) => {
             return response.json();
         })
-        .then((datas) => {
+        .then((datas: User) => {
             console.log(datas);
+            // setTodos(datas.todos.sort((a: TodoDatas, b: TodoDatas) => {
+            //     return a.pos - b.pos;
+            // }));
+            setTodoUpdate(todoUpdate + 1);
         })
         .catch((err) => {
             console.log(err);
         })
     }
-    
+
+    useEffect(() => {
+        fetch("http://localhost:3000/user/getUserTodos/2", {method: 'GET', mode: 'cors', credentials: 'same-origin'})
+        .then((response) => {
+            return response.json();
+        })
+        .then((datas) => {
+            console.log(datas);
+            setTodos(datas.todos.sort((a: TodoDatas, b: TodoDatas) => {
+                return a.pos - b.pos;
+            }));
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }, [todoUpdate])
+
     return (
         <div className={`todo-page-container todo-page-container-${theme}`}>
             <img className='todo-img' src={theme === "dark" ? ImageBackgroundDark : ImageBackgroundLight} alt="first img"></img>
             <div className='todo-component-container'>
                 <div className='header-todo-component'>
                     <h1> todo </h1>
-                    <h5 onClick={() => fetchUser()}> Connect </h5>
+                    <h5> Connect </h5>
                     <div onClick={() => theme == "dark" ? setTheme("light") : setTheme("dark")}>
                         {
                             theme == "dark" ? <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"><path fill="#FFF" fillRule="evenodd" d="M13 21a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-5.657-2.343a1 1 0 010 1.414l-2.121 2.121a1 1 0 01-1.414-1.414l2.12-2.121a1 1 0 011.415 0zm12.728 0l2.121 2.121a1 1 0 01-1.414 1.414l-2.121-2.12a1 1 0 011.414-1.415zM13 8a5 5 0 110 10 5 5 0 010-10zm12 4a1 1 0 110 2h-3a1 1 0 110-2h3zM4 12a1 1 0 110 2H1a1 1 0 110-2h3zm18.192-8.192a1 1 0 010 1.414l-2.12 2.121a1 1 0 01-1.415-1.414l2.121-2.121a1 1 0 011.414 0zm-16.97 0l2.121 2.12A1 1 0 015.93 7.344L3.808 5.222a1 1 0 011.414-1.414zM13 0a1 1 0 011 1v3a1 1 0 11-2 0V1a1 1 0 011-1z"/></svg>
@@ -165,8 +232,8 @@ function TodoApp() {
                                 {(provided) => {
                                     return (
                                         <div
-                                        {...provided.droppableProps}
-                                        ref={provided.innerRef}
+                                            {...provided.droppableProps}
+                                            ref={provided.innerRef}
                                         >  
                                             {displayTodoList()}
                                             {provided.placeholder}
