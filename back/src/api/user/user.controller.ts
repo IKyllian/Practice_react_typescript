@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
-import { CreateUserDto } from './user.dto';
+import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, Put, Query } from '@nestjs/common';
+import { CreateUserDto, SigninQueryDto } from './user.dto';
 import { CreateTodoDto } from '../todo/todo.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
@@ -15,6 +15,11 @@ type posType = {
   destPos: number,
 }
 
+type signType = {
+  email: string;
+  password: string;
+}
+
 @Controller('user')
 export class UserController {
   @Inject(UserService)
@@ -23,18 +28,38 @@ export class UserController {
   @Inject(TodoService)
   private readonly todo_service: TodoService;
 
+   @Get('signin')
+  public checkUser(@Query() query: SigninQueryDto): Promise<User | void> {
+    return this.service.checkUser(query.email, query.password);
+  }
+
   @Get(':id')
   public getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    console.log("ID = " + id);
     return this.service.getUser(id);
   }
 
   @Get('getUserTodos/:id')
   public getTodos(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    console.log("ID = " + id);
     return this.service.getTodos(id);
   }
+  
+
+  // @Get('signin/:email/:password')
+  // public checkUser(@Param('email') email: string, @Param('password') password: string): Promise<User | void> {
+  //   console.log("Email = " + email);
+  //   console.log("Password = " + password);
+  //   return this.service.checkUser(email, password);
+  // }
+
+ 
+
+  
 
   @Post('create')
   public createUser(@Body() body: CreateUserDto): Promise<User> {
+    console.log(body);
     return this.service.createUser(body);
   }
 

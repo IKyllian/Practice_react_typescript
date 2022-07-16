@@ -6,6 +6,9 @@ import { CreateTodoDto } from '../todo/todo.dto';
 import { User } from './user.entity';
 import { Todo } from '../todo/todo.entity';
 import { TodoService } from '../todo/todo.service'
+import * as bcrypt from 'bcrypt';
+
+const saltRounds = 15;
 
 @Injectable()
 export class UserService {
@@ -13,8 +16,20 @@ export class UserService {
   private readonly repository: Repository<User>;
 
   public getUser(id: number): Promise<User> {
-    return this.repository.findOneBy({id: id});
+    return this.repository.findOne({where: {id: id}, relations: ["todos"] });
   }
+
+  public checkUser(email: string, password: string): Promise<User | void> {
+    return this.repository.findOneBy({email: email}).then(async (user: User) => {
+      const match = await bcrypt.compare(password, user.password);
+      if (match)
+        console.log("User is Log");
+      else
+        console.log("Password doesn't match");
+      return user;
+    })
+    .catch((err) => console.log(err));
+  } 
 
   public getTodos(id: number): Promise<User> {
 	  return this.repository.findOne({where: {id: id}, relations: ["todos"] });
@@ -25,11 +40,26 @@ export class UserService {
     return this.repository.findOne({where: {id: userId}, relations: ["todos"] });
   }
 
-  public createUser(body: CreateUserDto): Promise<User> {
+  public async createUser(body: CreateUserDto): Promise<User> {
+    const password = body.password;
     const user: User = new User();
 
     user.name = body.name;
     user.email = body.email;
+    // console.log("TEST");
+    // console.log(password);
+    const hash = await bcrypt.hash(password, saltRounds);
+    user.password = hash;
+    // bcrypt.hash(password, saltRounds, function(err, hash) {
+    //   // console.log("TEST2");
+    //   // console.log(hash);
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     user.password = hash;
+    //   }
+    //   // Store hash in your password DB.
+    // });
     user.todos = [];
 
     return this.repository.save(user);

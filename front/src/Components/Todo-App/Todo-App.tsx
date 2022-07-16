@@ -1,29 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import {DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import {DragDropContext, Droppable } from 'react-beautiful-dnd'
 import ImageBackgroundDark from "../../Images/Todo-App/bg-desktop-dark.jpg"
 import ImageBackgroundLight from "../../Images/Todo-App/bg-desktop-light.jpg"
 import TodoItem from "./TodoItem"
+import { TodoDatas, User } from '../../Interfaces/TodoInterfaces'
 
-type TodoDatas = {
-    id: number,
-    content: string,
-    isActive: boolean,
-    isComplete: boolean,
-    pos: number,
-    createdAt: Date,
-    updatedAt: Date,
-}
-
-type User = {
-    id: number,
-    name: string,
-    email: string,
-    pos: number,
-    isDeleted: boolean,
-    createdAt: Date,
-    updatedAt: Date,
-    todos: TodoDatas[],
-}
 
 function TodoApp() {
     const [todoUpdate, setTodoUpdate] = useState<number>(0);
@@ -32,12 +13,14 @@ function TodoApp() {
     const [todos, setTodos] = useState<TodoDatas[]>([]);
     const [theme, setTheme] = useState<string>("dark");
     const [filter, setFilter] = useState<string | null>("all");
+    const [userDatas, setUserDatas] = useState<User | undefined>(undefined);
+    const [userId, setUserId] = useState(11);
 
     const handleSubmit = (event: React.SyntheticEvent): void => {
         event.preventDefault();
         console.log(todos.length);
         if (newTodo != "" && (todos.filter((element: TodoDatas) => element.content === newTodo)).length <= 0) {
-            fetch("http://localhost:3000/user/addTodo/2", {    
+            fetch(`http://localhost:3000/user/addTodo/${userId}`, {    
             method: 'PUT',
             body: JSON.stringify({
                 content: newTodo,
@@ -100,7 +83,7 @@ function TodoApp() {
     }
 
     const removeCompletedElements = (): void => {
-        fetch(`http://localhost:3000/todo/deleteCompletedTodo/2`, {    
+        fetch(`http://localhost:3000/todo/deleteCompletedTodo/${userId}`, {    
             method: 'DELETE',
         })
         .then((response) => {
@@ -134,7 +117,7 @@ function TodoApp() {
         fetch(`http://localhost:3000/todo/deleteTodo/${todos[index].id}`, {    
             method: 'DELETE',
             body: JSON.stringify({
-                clientId: 2
+                clientId: userId,
             }),
             headers: {
                 'Content-type': "application/json",
@@ -157,7 +140,7 @@ function TodoApp() {
         let newArray: TodoDatas[] = [...todos];
         newArray.splice(destIdx, 0, newArray.splice(sourceIdx, 1)[0]);
         setTodos(newArray);
-        fetch(`http://localhost:3000/user/switchPos/2`, {    
+        fetch(`http://localhost:3000/user/switchPos/${userId}`, {    
             method: 'POST',
             body: JSON.stringify({
                 srcPos: sourceIdx,
@@ -172,10 +155,10 @@ function TodoApp() {
         })
         .then((datas: User) => {
             console.log(datas);
-            // setTodos(datas.todos.sort((a: TodoDatas, b: TodoDatas) => {
-            //     return a.pos - b.pos;
-            // }));
-            setTodoUpdate(todoUpdate + 1);
+            setTodos(datas.todos.sort((a: TodoDatas, b: TodoDatas) => {
+                return a.pos - b.pos;
+            }));
+            // setTodoUpdate(todoUpdate + 1);
         })
         .catch((err) => {
             console.log(err);
@@ -183,7 +166,7 @@ function TodoApp() {
     }
 
     useEffect(() => {
-        fetch("http://localhost:3000/user/getUserTodos/2", {method: 'GET', mode: 'cors', credentials: 'same-origin'})
+        fetch(`http://localhost:3000/user/getUserTodos/${userId}`, {method: 'GET', mode: 'cors', credentials: 'same-origin'})
         .then((response) => {
             return response.json();
         })
@@ -198,13 +181,14 @@ function TodoApp() {
         })
     }, [todoUpdate])
 
+    console.log("User = " + userDatas);
+
     return (
         <div className={`todo-page-container todo-page-container-${theme}`}>
             <img className='todo-img' src={theme === "dark" ? ImageBackgroundDark : ImageBackgroundLight} alt="first img"></img>
             <div className='todo-component-container'>
                 <div className='header-todo-component'>
                     <h1> todo </h1>
-                    <h5> Connect </h5>
                     <div onClick={() => theme == "dark" ? setTheme("light") : setTheme("dark")}>
                         {
                             theme == "dark" ? <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"><path fill="#FFF" fillRule="evenodd" d="M13 21a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-5.657-2.343a1 1 0 010 1.414l-2.121 2.121a1 1 0 01-1.414-1.414l2.12-2.121a1 1 0 011.415 0zm12.728 0l2.121 2.121a1 1 0 01-1.414 1.414l-2.121-2.12a1 1 0 011.414-1.415zM13 8a5 5 0 110 10 5 5 0 010-10zm12 4a1 1 0 110 2h-3a1 1 0 110-2h3zM4 12a1 1 0 110 2H1a1 1 0 110-2h3zm18.192-8.192a1 1 0 010 1.414l-2.12 2.121a1 1 0 01-1.415-1.414l2.121-2.121a1 1 0 011.414 0zm-16.97 0l2.121 2.12A1 1 0 015.93 7.344L3.808 5.222a1 1 0 011.414-1.414zM13 0a1 1 0 011 1v3a1 1 0 11-2 0V1a1 1 0 011-1z"/></svg>

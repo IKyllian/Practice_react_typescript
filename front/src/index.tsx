@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-
+import {Provider} from 'react-redux';
+import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import './Styles/index.scss';
 
 import Home from './Components/Home'
 import RoomHomepage from './Components/RoomHomepage/RoomHomepage';
 import TodoApp from './Components/Todo-App/Todo-App';
+import TodoAppHome from './Components/Todo-App/Home-Todo';
+import Signin from './Components/Todo-App/Signin';
+
+import { store } from './Redux/Store'
 
 import reportWebVitals from './reportWebVitals';
 
@@ -15,14 +20,18 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   // <React.StrictMode>
+  <Provider store={store}>
     <BrowserRouter>
-    <Routes>
-
-      <Route path='/' element={ <TodoApp /> }/>
-      {/* <Route path='/' element={ <Home /> } /> */}
-      <Route path='/room-homepage' element={ <RoomHomepage /> }/>
-    </Routes>
+      <Routes>
+        <Route path='/' element={ <TodoAppHome /> }/>
+        <Route path='/projectPage' element={ <TodoApp /> }/>
+        {/* <Route path='/' element={ <Home /> } /> */}
+        <Route path='/room-homepage' element={ <RoomHomepage /> }/>
+        <Route path='/signin' element={ <Signin /> }/>
+      </Routes>
     </BrowserRouter>
+  // </Provider>
+    
   // </React.StrictMode>
 );
 

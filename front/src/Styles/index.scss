@@ -14,6 +14,51 @@ p, h1, h2, h3, h4, h5, h6 {
   padding: 0;
 } 
 
+
+$darkGray: hsl(0, 0%, 63%);
+$veryDarkGray: hsl(0, 0%, 27%);
+
+$BrightBlue: hsl(220, 98%, 61%);
+$CheckBackground: linear-gradient(hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+
+// Dark Theme
+$VeryDarkBlue: hsl(235, 21%, 11%);
+$VeryDarkDesaturatedBlue: hsl(235, 24%, 19%);
+$LightGrayishBlue: hsl(234, 39%, 85%);
+$LightGrayishBlueHover: hsl(236, 33%, 92%);
+$DarkGrayishBlue: hsl(234, 11%, 52%);
+$VeryDarkGrayishBlue: hsl(233, 14%, 35%);
+$VeryDarkGrayishBlue: hsl(237, 14%, 26%);
+
+// Light Theme
+$VeryLightGray: hsl(0, 0%, 98%);
+$VeryLightGrayishBlue: hsl(236, 33%, 92%);
+$LightGrayishBlue: hsl(233, 11%, 84%);
+$DarkGrayishBlue: hsl(236, 9%, 61%);
+$VeryDarkGrayishBlue: hsl(235, 19%, 35%);
+
+$MargeListItems: 15px;
+$WidthTodoContainers: 510px;
+
+
+@font-face {
+    font-family: LeagueSpartan;
+    src: url("../../public/Fonts/League_Spartan/static/LeagueSpartan-Regular.ttf");
+}
+
+@font-face {
+    font-family: LeagueSpartanBold;
+    src: url("../../public/Fonts/League_Spartan/static/LeagueSpartan-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: JosefinSans;
+  src: url("../../public/Fonts/Josefin_Sans/static/JosefinSans-Regular.ttf");
+}
+
+
 @import './Todo.scss';
 @import './Home.scss';
 @import './RoomHomepage.scss';
+@import './Sign.scss';
+@import './Home-todo.scss';
