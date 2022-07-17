@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { User } from '../user/user.entity'
+import { Project } from '../project/project.entity'
+
 @Entity()
 export class Todo {
   @PrimaryGeneratedColumn()
@@ -17,8 +18,8 @@ export class Todo {
   @Column({ type: 'integer', default: 0})
   public pos: number;
 
-  @ManyToOne(() => User, (user) => user.todos, {onDelete: "CASCADE"})
-    user: User;
+  @ManyToOne(() => Project, (project) => project.todos, {onDelete: "CASCADE"})
+    project: Project;
 
   /*
    * Create and Update Date Columns

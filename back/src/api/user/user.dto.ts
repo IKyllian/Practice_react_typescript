@@ -1,6 +1,5 @@
 import { IsEmail, isNotEmpty, IsNotEmpty, IsObject, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { Todo } from '../todo/todo.entity';
 
 function toLowerCase(value: string): string {
   return value.toLowerCase();
@@ -9,7 +8,7 @@ function toLowerCase(value: string): string {
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  public name: string;
+  public username: string;
 
   @Transform(({ value }) => toLowerCase(value))
   @IsEmail()
@@ -19,7 +18,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   public password: string;
 
-  public todo: Todo[];
 }
 
 export class SigninQueryDto {

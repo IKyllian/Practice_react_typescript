@@ -9,6 +9,7 @@ import Home from './Components/Home'
 import RoomHomepage from './Components/RoomHomepage/RoomHomepage';
 import TodoApp from './Components/Todo-App/Todo-App';
 import TodoAppHome from './Components/Todo-App/Home-Todo';
+import ModalProject from './Components/Todo-App/Modal-Add-Project';
 import Signin from './Components/Todo-App/Signin';
 
 import { store } from './Redux/Store'
@@ -23,14 +24,17 @@ root.render(
   <Provider store={store}>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={ <TodoAppHome /> }/>
+        <Route path='/' element={ <TodoAppHome /> }>
+          <Route path='add-project' element={ <ModalProject /> }/>
+        </Route>
+        {/* <Route path='/add-project' element={ <ModalProject /> }/> */}
         <Route path='/projectPage' element={ <TodoApp /> }/>
         {/* <Route path='/' element={ <Home /> } /> */}
         <Route path='/room-homepage' element={ <RoomHomepage /> }/>
         <Route path='/signin' element={ <Signin /> }/>
       </Routes>
     </BrowserRouter>
-  // </Provider>
+  </Provider>
     
   // </React.StrictMode>
 );

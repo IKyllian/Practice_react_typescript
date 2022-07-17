@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Todo } from '../todo/todo.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany } from 'typeorm';
+import { Project } from '../project/project.entity';
 
 @Entity()
 export class User {
@@ -7,7 +7,7 @@ export class User {
   public id!: number;
 
   @Column({ type: 'varchar', length: 120 })
-  public name: string;
+  public username: string;
 
   @Column({ type: 'varchar', length: 120 })
   public email: string;
@@ -15,11 +15,11 @@ export class User {
   @Column({type: 'varchar'})
   public password: string;
 
-  @Column({ type: 'boolean', default: false })
-  public isDeleted: boolean;
+  @ManyToMany(() => Project, (project) => project.users, {onDelete: "CASCADE"})
+  public projects: Project[];
 
-  @OneToMany(() => Todo, (todo) => todo.user)
-  public todos: Todo[];
+  @ManyToMany(() => Project, (project) => project.invites, {onDelete: "CASCADE"})
+  public invites: Project[];
 
 
   /*

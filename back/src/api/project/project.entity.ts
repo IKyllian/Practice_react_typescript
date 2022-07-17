@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
 import { User } from '../user/user.entity'
+import { Todo } from '../todo/todo.entity'
 
 @Entity()
 export class Project {
@@ -9,17 +10,14 @@ export class Project {
   @Column({ type: 'varchar' })
   public name: string;
 
-  @Column({ type: 'boolean', default: false})
-  public isActive: boolean;
+  @OneToMany(() => Todo, (todo) => todo.project, {onDelete: "CASCADE"})
+    public todos: Todo[];
 
-  @Column({ type: 'boolean', default: false })
-  public isComplete: boolean;
+  @ManyToMany(() => User, (user) => user.projects, {onDelete: "CASCADE"})
+    users: User[];
 
-  @Column({ type: 'integer', default: 0})
-  public pos: number;
-
-  @ManyToOne(() => User, (user) => user.todos, {onDelete: "CASCADE"})
-    user: User;
+  @ManyToMany(() => User, (user) => user.invites, {onDelete: "CASCADE"})
+    invites: User[];
 
   /*
    * Create and Update Date Columns

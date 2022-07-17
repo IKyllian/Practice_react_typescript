@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './user.dto';
-import { CreateTodoDto } from '../todo/todo.dto';
+import { CreateProjectDto } from '../project/project.dto';
 import { User } from './user.entity';
-import { Todo } from '../todo/todo.entity';
-import { TodoService } from '../todo/todo.service'
+import { Project } from '../project/project.entity';
+import { ProjectService } from '../project/project.service'
 import * as bcrypt from 'bcrypt';
 
 const saltRounds = 15;
@@ -16,7 +16,7 @@ export class UserService {
   private readonly repository: Repository<User>;
 
   public getUser(id: number): Promise<User> {
-    return this.repository.findOne({where: {id: id}, relations: ["todos"] });
+    return this.repository.findOne({where: {id: id} }) //, relations: ["todos"] });
   }
 
   public checkUser(email: string, password: string): Promise<User | void> {
@@ -31,46 +31,39 @@ export class UserService {
     .catch((err) => console.log(err));
   } 
 
-  public getTodos(id: number): Promise<User> {
-	  return this.repository.findOne({where: {id: id}, relations: ["todos"] });
-  }
+  // public getTodos(id: number): Promise<User> {
+	//   return this.repository.findOne({where: {id: id}, relations: ["todos"] });
+  // }
 
-  public switchPos(srcPos: number, destPost: number, userId: number, todo_service: TodoService): Promise<User> {
-    todo_service.switchPos(srcPos, destPost, userId);
-    return this.repository.findOne({where: {id: userId}, relations: ["todos"] });
-  }
+  // public switchPos(srcPos: number, destPost: number, userId: number, todo_service: TodoService): Promise<User> {
+  //   todo_service.switchPos(srcPos, destPost, userId);
+  //   return this.repository.findOne({where: {id: userId}, relations: ["todos"] });
+  // }
 
   public async createUser(body: CreateUserDto): Promise<User> {
     const password = body.password;
     const user: User = new User();
 
-    user.name = body.name;
+    user.username = body.username;
     user.email = body.email;
     // console.log("TEST");
     // console.log(password);
     const hash = await bcrypt.hash(password, saltRounds);
-    user.password = hash;
-    // bcrypt.hash(password, saltRounds, function(err, hash) {
-    //   // console.log("TEST2");
-    //   // console.log(hash);
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     user.password = hash;
-    //   }
-    //   // Store hash in your password DB.
-    // });
-    user.todos = [];
+    if (hash)
+      user.password = hash;
+    // ELSE Throx an error
 
+    user.projects = [];
+    user.invites = [];
     return this.repository.save(user);
   }
 
-  public async addTodo(id: number, body: CreateTodoDto, todo_service: TodoService): Promise<Todo> {
-    return await this.repository.findOneBy({id: id}).then(async(user: User) => {
-      return todo_service.createTodo(body, user, await this.repository.findOne({where: {id: id}, relations: ["todos"] }).then((user) =>  {return user.todos.length}));
-    }).catch((err: any): Promise<any> => {
-      console.log(err);
-      return (err);
-    })
-  }
+  // public async addTodo(id: number, body: CreateTodoDto, todo_service: TodoService): Promise<Todo> {
+  //   return await this.repository.findOneBy({id: id}).then(async(user: User) => {
+  //     return todo_service.createTodo(body, user, await this.repository.findOne({where: {id: id}, relations: ["todos"] }).then((user) =>  {return user.todos.length}));
+  //   }).catch((err: any): Promise<any> => {
+  //     console.log(err);
+  //     return (err);
+  //   })
+  // }
 }
