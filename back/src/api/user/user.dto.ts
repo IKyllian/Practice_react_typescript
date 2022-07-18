@@ -1,4 +1,4 @@
-import { IsEmail, isNotEmpty, IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 function toLowerCase(value: string): string {

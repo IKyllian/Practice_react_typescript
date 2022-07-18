@@ -1,10 +1,9 @@
 import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
-import { CreateTodoDto } from './todo.dto';
 import { Todo } from './todo.entity';
 import { TodoService } from './todo.service';
 
 type idType = {
-  clientId: number,
+  projectId: number,
 }
 
 @Controller('todo')
@@ -12,33 +11,28 @@ export class TodoController {
   @Inject(TodoService)
   private readonly service: TodoService;
 
+  @Get()
+  public async getTodos(): Promise<Todo[]> {
+    return await this.service.getTodos();
+  }
+
   @Post('updateActiveStatus/:id')
-  public updateActiveStatus(@Param('id', ParseIntPipe) id: number): Promise<Todo> {
-    return this.service.updateActiveStatus(id);
+  public async updateActiveStatus(@Param('id', ParseIntPipe) id: number): Promise<Todo> {
+    return await this.service.updateActiveStatus(id);
   }
 
   @Post('updateCompleteStatus/:id')
-  public updateCompleteStatus(@Param('id', ParseIntPipe) id: number): Promise<Todo> {
-    return this.service.updateCompleteState(id);
+  public async updateCompleteStatus(@Param('id', ParseIntPipe) id: number): Promise<Todo> {
+    return await this.service.updateCompleteState(id);
   }
 
   @Delete('deleteTodo/:id')
-  public deleteTodo(@Body() body: idType, @Param('id', ParseIntPipe) id: number): boolean {
-    return this.service.deleteTodo(body.clientId, id);
+  public async deleteTodo(@Body() body: idType, @Param('id', ParseIntPipe) id: number): Promise<Todo[]> {
+    return await this.service.deleteTodo(body.projectId, id);
   }
 
   @Delete('deleteCompletedTodo/:id')
-  public deleteCompletedTodo(@Param('id', ParseIntPipe) id: number): boolean {
-    return this.service.deleteCompletedTodo(id);
+  public async deleteCompletedTodo(@Param('id', ParseIntPipe) id: number): Promise<Todo[]> {
+    return await this.service.deleteCompletedTodo(id);
   }
-
-//   @Get()
-//   public getTodos(): Promise<Todo[]> {
-//     return this.service.getTodos();
-//   }
-
-//   @Post()
-//   public createTodo(@Body() body: CreateTodoDto): Promise<Todo> {
-//     return this.service.createTodo(body);
-//   }
 }

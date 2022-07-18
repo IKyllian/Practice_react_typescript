@@ -10,20 +10,24 @@ export class TodoService {
   @InjectRepository(Todo)
   private readonly repository: Repository<Todo>;
 
-  // public reorderAfterDelete(id: number, pos: number): void {
-  //   this.repository.find({relations: ['user'], where: {user: {id: id}}}).then((todos: Todo[]) => {
-  //       if (todos.length > 0) {
-  //         todos.forEach((elem: Todo) => {
-  //             if (elem.pos > pos) {
-  //               this.repository.findOneBy({id: elem.id}).then((todo: Todo) => {
-  //                 todo.pos -= 1;
-  //                 this.repository.save(todo);
-  //               })
-  //             }
-  //         })
-  //       }
-  //   })
-  // }
+  public async getTodos(): Promise<Todo[]> {
+    return await this.repository.find();
+  }
+
+  public reorderAfterDelete(projectId: number, pos: number): void {
+    this.repository.find({relations: ['project'], where: {project: {id: projectId}}}).then((todos: Todo[]) => {
+        if (todos.length > 0) {
+          todos.forEach((elem: Todo) => {
+              if (elem.pos > pos) {
+                this.repository.findOneBy({id: elem.id}).then((todo: Todo) => {
+                  todo.pos -= 1;
+                  this.repository.save(todo);
+                })
+              }
+          })
+        }
+    })
+  }
 
   public async updateActiveStatus(id: number): Promise<Todo> {
     const todo = await this.repository.findOneBy({id: id});
@@ -39,42 +43,43 @@ export class TodoService {
     return this.repository.save(todo);
   }
 
-  public createTodo(body: CreateTodoDto, project: Project, pos: number): Promise<Todo> {
+  public async createTodo(body: CreateTodoDto, project: Project, pos: number): Promise<Todo> {
     const todo: Todo = new Todo();
     
     todo.content = body.content;
     todo.isActive = body.isActive;
-    todo.isComplete = body.isComplete;
+    todo.isComplete = false;
     todo.pos = pos;
     todo.project = project;
 
-    return this.repository.save(todo);
+    return await this.repository.save(todo);
   }
 
-  public deleteTodo(clientId: number, todoId: number): boolean {
-    this.repository.findOneBy({id: todoId}).then((elem: Todo) => {
+  public async deleteTodo(projectId: number, todoId: number): Promise<Todo[]> {
+    return await this.repository.findOneBy({id: todoId}).then((elem: Todo) => {
       if (elem != null) {
         this.repository.delete({id: elem.id});
-        // this.reorderAfterDelete(clientId, elem.pos);
-      } 
-    })
-    return (true);
+        this.reorderAfterDelete(projectId, elem.pos);
+        return this.repository.find({relations: ['project'], where: {project: {id: projectId}}})
+      } else
+        return Promise.reject("Project does not exist");
+    }).catch((err) => { return Promise.reject("Project does not exist"); });
   }
 
-  public deleteCompletedTodo(id: number): boolean {
-    this.repository.find({relations: ['project'], where: {project: {id: id}, isComplete: true}}).then((todos: Todo[]) => {
+  public async deleteCompletedTodo(projectId: number): Promise<Todo[]> {
+    return await this.repository.find({relations: ['project'], where: {project: {id: projectId}, isComplete: true}}).then((todos: Todo[]) => {
       todos.forEach((elem: Todo) =>  {
         let pos: number = elem.pos;
         this.repository.delete({pos: elem.pos});
-        // this.reorderAfterDelete(id, pos);
+        this.reorderAfterDelete(projectId, pos);
+        return Promise.resolve(todos);
       })
-      return true;
-    })
-    return (true);
+      return Promise.resolve(todos);
+    }).catch((err: any) => { return Promise.reject("Project does not exist") });
   }
 
-  public switchPos(srcPos: number, destPos: number, projectId: number): boolean {
-    this.repository.find({relations: ['project'], where: {project: {id: projectId}}}).then((todos: Todo[]) => {
+  public async switchPos(srcPos: number, destPos: number, projectId: number): Promise<Todo[]> {
+    return await this.repository.find({relations: ['project'], where: {project: {id: projectId}}}).then((todos: Todo[]) => {
       if (todos.length > 1) {
         todos.forEach((elem: Todo) => {
             if (srcPos > destPos && elem.pos >= destPos && elem.pos < srcPos) {
@@ -96,8 +101,8 @@ export class TodoService {
           todo.pos = destPos;
          console.log(await this.repository.save(todo));
         })
+        return this.repository.find({relations: ['project'], where: {project: {id: projectId}}});
       }
-    })
-    return (true);
+    }).catch((err: any) => { return Promise.reject("Project does not exist")});
   }
 }

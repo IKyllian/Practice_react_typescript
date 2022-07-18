@@ -1,16 +1,11 @@
-import { IsBoolean, isBoolean, IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateProjectDto {
   @IsString()
   @IsNotEmpty()
-  content: string;
+  name: string;
 
-  @IsBoolean()
-  isActive: boolean;
-  
   @IsNumber()
-  public pos: number;
+  userId: number;
 
-  @IsBoolean()
-  isComplete: boolean;
 }

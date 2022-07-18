@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinTable, OneToMany, ManyToMany } from 'typeorm';
 import { User } from '../user/user.entity'
 import { Todo } from '../todo/todo.entity'
 
@@ -11,7 +11,7 @@ export class Project {
   public name: string;
 
   @OneToMany(() => Todo, (todo) => todo.project, {onDelete: "CASCADE"})
-    public todos: Todo[];
+  public todos: Todo[];
 
   @ManyToMany(() => User, (user) => user.projects, {onDelete: "CASCADE"})
     users: User[];
