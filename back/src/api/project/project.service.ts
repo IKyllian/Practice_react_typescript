@@ -33,7 +33,7 @@ export class ProjectService {
       project.users = [user];
       project.invites = [];
   
-      return this.repository.save(project);
+      return await this.repository.save(project);
     } else
       return Promise.reject("User does not exist");    
   }
@@ -41,7 +41,7 @@ export class ProjectService {
   public async addTodo(body: CreateTodoDto, projectId: number, todo_service: TodoService): Promise<Todo> {
     const project = await this.repository.findOne({where: {id: projectId}, relations: ["todos"] });
     if (project) {
-      return todo_service.createTodo(body, project, project.todos.length);
+      return await todo_service.createTodo(body, project, project.todos.length);
     } else
       return Promise.reject("Project does not exist");
   }
@@ -49,8 +49,8 @@ export class ProjectService {
   public async switchPos(srcPos: number, destPost: number, projectId: number, todo_service: TodoService): Promise<Project> {
     const project = await this.repository.findOneBy({ id: projectId });
     if (project) {
-      todo_service.switchPos(srcPos, destPost, projectId);
-      return this.repository.findOne({where: {id: projectId}, relations: ["todos"] });
+      await todo_service.switchPos(srcPos, destPost, projectId);
+      return await this.repository.findOne({where: {id: projectId}, relations: ["todos"] });
     } else
       return Promise.reject("Poject does not exist");
   }

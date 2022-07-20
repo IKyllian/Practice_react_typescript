@@ -13,10 +13,10 @@ export interface User {
     name?: string,
     email?: string,
     password?: string,
-    isDeleted: boolean,
     createdAt?: Date,
     updatedAt?: Date,
-    todos: TodoDatas[],
+    projects: Project[],
+    invites: Project[],
 }
 
 export interface Project {
@@ -24,6 +24,7 @@ export interface Project {
     name: string,
     todos: TodoDatas[],
     users: User[],
+    invites: User[],
     createdAt: Date,
     updatedAt: Date,
 }

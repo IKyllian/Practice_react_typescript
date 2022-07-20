@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { User } from '../Interfaces/TodoInterfaces'
+import { User, TodoDatas } from '../Interfaces/TodoInterfaces'
 
 const initialUser: User = {
     id: null,
-    isDeleted: false,
-    todos: [],
+    projects: [],
+    invites: [],
 }
 
 export const userSlice = createSlice({
@@ -16,11 +16,41 @@ export const userSlice = createSlice({
             state.name = action.payload.name;
             state.email = action.payload.email;
             state.password = action.payload.password;
-            state.isDeleted = action.payload.isDeleted;
             state.createdAt = action.payload.createdAt;
             state.updatedAt = action.payload.updatedAt;
-            state.todos = action.payload.todos;
+            state.projects = action.payload.projects;
         },
         logout: () => { return initialUser },
+        addProject: (state, action) => {
+            state.projects.push(action.payload);
+            return state;
+        },
+        deleteProject: (state, action) => {
+            state.projects.slice(action.payload.index, 1);
+        },
+        replaceProjectArray: (state, action) => {
+            state.projects = action.payload;
+            return state;
+        },
+        addTodo: (state, action) => {            
+            state.projects[action.payload.projectIdx].todos.push(action.payload.todo);
+            return state;
+        },
+        replaceTodosArray: (state, action) => {
+            state.projects[action.payload.projectIdx].todos = action.payload.newTodosArray;
+            return state;
+        },
+        reorderTodos: (state, action) => {
+            state.projects[action.payload.index].todos.sort((a: TodoDatas, b: TodoDatas) => {
+                return a.pos - b.pos;
+            });
+            return state;
+        },
+        changeActiveStatus: (state, action) => {
+            state.projects[action.payload.projectIdx].todos[action.payload.todoIdx].isActive = action.payload.status;
+        },
+        changeCompleteStatus: (state, action) => {
+            state.projects[action.payload.projectIdx].todos[action.payload.todoIdx].isComplete = action.payload.status;
+        },
     }
 });

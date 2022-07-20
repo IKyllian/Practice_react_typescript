@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinTable, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinTable, OneToMany, ManyToMany } from 'typeorm';
 import { User } from '../user/user.entity'
 import { Todo } from '../todo/todo.entity'
 
 @Entity()
 export class Project {
   @PrimaryGeneratedColumn()
+  @PrimaryColumn({ unique: true })
   public id!: number;
 
   @Column({ type: 'varchar' })

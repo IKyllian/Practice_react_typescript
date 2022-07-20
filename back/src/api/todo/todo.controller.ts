@@ -17,13 +17,13 @@ export class TodoController {
   }
 
   @Post('updateActiveStatus/:id')
-  public async updateActiveStatus(@Param('id', ParseIntPipe) id: number): Promise<Todo> {
-    return await this.service.updateActiveStatus(id);
+  public async updateActiveStatus(@Body() body: {status: boolean}, @Param('id', ParseIntPipe) id: number): Promise<any> {
+    return await this.service.updateActiveStatus(body.status, id);
   }
 
   @Post('updateCompleteStatus/:id')
-  public async updateCompleteStatus(@Param('id', ParseIntPipe) id: number): Promise<Todo> {
-    return await this.service.updateCompleteState(id);
+  public async updateCompleteStatus(@Body() body: {status: boolean}, @Param('id', ParseIntPipe) id: number): Promise<any> {
+    return await this.service.updateCompleteState(body.status, id);
   }
 
   @Delete('deleteTodo/:id')

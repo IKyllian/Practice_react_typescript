@@ -27,8 +27,7 @@ root.render(
         <Route path='/' element={ <TodoAppHome /> }>
           <Route path='add-project' element={ <ModalProject /> }/>
         </Route>
-        {/* <Route path='/add-project' element={ <ModalProject /> }/> */}
-        <Route path='/projectPage' element={ <TodoApp /> }/>
+        <Route path='/projectPage/:projectId/:projectIndex' element={ <TodoApp /> }/>
         {/* <Route path='/' element={ <Home /> } /> */}
         <Route path='/room-homepage' element={ <RoomHomepage /> }/>
         <Route path='/signin' element={ <Signin /> }/>

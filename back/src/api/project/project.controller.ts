@@ -39,7 +39,7 @@ export class ProjectController {
     return await this.service.addTodo(body, id, this.todo_service);
   }
 
-  @Post('switchPos/:id')
+  @Post('switchTodosPos/:id')
   public async switchPos(@Body() body: posType, @Param('id', ParseIntPipe) userId: number): Promise<Project> {
     return await this.service.switchPos(body.srcPos, body.destPos, userId, this.todo_service);
   }

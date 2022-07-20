@@ -13,11 +13,11 @@ export class UserService {
   private readonly repository: Repository<User>;
 
   public async getUser(id: number): Promise<User> {
-    return await this.repository.findOne({where: {id: id}, relations: ["projects"] });
+    return await this.repository.findOne({where: {id: id}, relations: ["projects", "projects.todos"] });
   }
 
   public async signin(email: string, password: string): Promise<User> {
-    return this.repository.findOneBy({email: email}).then(async (user: User) => {
+    return await this.repository.findOneBy({email: email}).then(async (user: User) => {
       const match = await bcrypt.compare(password, user.password);
       if (match)
         return user;
@@ -43,6 +43,6 @@ export class UserService {
       return Promise.reject("Error occured with password hash");
     user.projects = [];
     user.invites = [];
-    return this.repository.save(user);
+    return await this.repository.save(user);
   }
 }

@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryColumn,  PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
 import { Project } from '../project/project.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
+  @PrimaryColumn({ unique: true })
   public id!: number;
 
   @Column({ type: 'varchar', length: 120 })
