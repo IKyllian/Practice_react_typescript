@@ -10,7 +10,7 @@ export interface TodoDatas {
 
 export interface User {
     id: number | null,
-    name?: string,
+    username?: string,
     email?: string,
     password?: string,
     createdAt?: Date,

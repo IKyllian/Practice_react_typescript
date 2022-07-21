@@ -1,23 +1,43 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { User } from '../../Interfaces/TodoInterfaces'
-import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../Redux/Store'
 import { useAppDispatch, useAppSelector } from '../../Redux/Hooks'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const userId: number = 1;
 
 function HomeTodo() {
+    const [coords, setCoords] = useState<{x: number, y: number}>({x: 0, y: 0});
     const [useBlur, setUseBlur] = useState<string>("");
     let location = useLocation();
-    let format = new RegExp('\\.*/add-project');
+    let addProjectFormat = new RegExp('\\.*/add-project');
+    let menuModalFormat = new RegExp('\\.*/menu-modal');
 
     const userDatas: User =  useAppSelector((state: RootState) => state.user);
+    let navigate = useNavigate();
     const dispatch = useAppDispatch();
 
+    function capitalizeFirstLetter(str: string){
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    const handleModalClick = () => {
+        if (menuModalFormat.test(location.pathname) && coords.x < 1008)
+            return navigate("/");
+    }
+
+    const handleMouseMove = (event: any) => {
+        if (menuModalFormat.test(location.pathname)) {
+            setCoords({
+                x: event.clientX - event.target.offsetLeft,
+                y: event.clientY - event.target.offsetTop,
+            });
+        }   
+    };
+
     useEffect(() => {
-        if (format.test(location.pathname))
+        if (addProjectFormat.test(location.pathname) || menuModalFormat.test(location.pathname))
             setUseBlur("home-blur");
         else
             setUseBlur("");
@@ -41,38 +61,48 @@ function HomeTodo() {
         })
     }, [])
 
-
-    return (
-        <Fragment>
-            <Outlet />
-            <div className={`home-todo-app ${useBlur}`}>
-                <header className='home-todo-header'>
-                    <h2> todo app </h2>
-                    { userDatas === undefined ? <h3> Signin </h3> : <h3> {userDatas.name} </h3> }
-                </header>
-                <div className='home-projects-container'>
-                    <div className='head-home-projects-container'>
-                        <h3> Your Projects </h3>
-                        <Link to="/add-project">
-                            Add Project
-                        </Link>
-                    </div>
-                    {
-                        userDatas.projects.map((element, index) =>
-                            <Link key={index} to={`projectPage/${element.id}/${index}`}>
-                                <div className='project-item'>
-                                    <p> {element.name} </p>
-                                    {/* <div className='arrow-home'>
-                                        <svg width="40" height="12" xmlns="http://www.w3.org/2000/svg"><path d="M34.05 0l5.481 5.527h.008v.008L40 6l-.461.465v.063l-.062-.001L34.049 12l-.662-.668 4.765-4.805H0v-1h38.206l-4.82-4.86L34.05 0z" fill="#000" fill-rule="nonzero"/></svg>
-                                    </div> */}
-                                </div>
-                            </Link>
-                        )
-                    }
-                </div>
+    if (userDatas.id == null) {
+        return (
+            <div>
+                No datas
             </div>
-        </Fragment>
-    );
+        )
+    } else {
+        return (
+            <Fragment>
+                <Outlet />
+                <div className={`home-todo-app ${useBlur}`} onMouseMove={handleMouseMove} onClick={() => handleModalClick()}>
+                    <header className='home-todo-header'>
+                        <h2> todo app </h2>
+                        <div className='username-badge-container'>
+                            <Link to="/menu-modal">
+                                <div className='home-badge'> 1 </div>
+                                <h3> {capitalizeFirstLetter(userDatas.username!)} </h3>
+                            </Link>
+                        </div>
+                        
+                    </header>
+                    <div className='home-projects-container'>
+                        <div className='head-home-projects-container'>
+                            <h3> Your Projects </h3>
+                            <Link to="/add-project">
+                                Add Project
+                            </Link>
+                        </div>
+                        {
+                            userDatas.projects.map((element, index) =>
+                                <Link key={index} to={`projectPage/${element.id}/${index}`}>
+                                    <div className='project-item'>
+                                        <p> {element.name} </p>
+                                    </div>
+                                </Link>
+                            )
+                        }
+                    </div>
+                </div>
+            </Fragment>
+        );
+    }
 }
 
 export default HomeTodo;

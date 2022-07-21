@@ -11,6 +11,7 @@ import TodoApp from './Components/Todo-App/Todo-App';
 import TodoAppHome from './Components/Todo-App/Home-Todo';
 import ModalProject from './Components/Todo-App/Modal-Add-Project';
 import Signin from './Components/Todo-App/Signin';
+import HomeRightModal from './Components/Todo-App/Home-Right-Modal';
 
 import { store } from './Redux/Store'
 
@@ -26,6 +27,7 @@ root.render(
       <Routes>
         <Route path='/' element={ <TodoAppHome /> }>
           <Route path='add-project' element={ <ModalProject /> }/>
+          <Route path='menu-modal' element={ <HomeRightModal /> }/>
         </Route>
         <Route path='/projectPage/:projectId/:projectIndex' element={ <TodoApp /> }/>
         {/* <Route path='/' element={ <Home /> } /> */}
