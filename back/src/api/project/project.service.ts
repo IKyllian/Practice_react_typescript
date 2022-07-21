@@ -20,7 +20,7 @@ export class ProjectService {
   }
 
   public async getTodos(projectId: number): Promise<Project> {
-    return await this.repository.findOne({where: {id: projectId}, relations: ["todos"] });
+    return await this.repository.findOne({where: {id: projectId}, relations: ["todos"], order: {todos: {pos: "ASC"}}});
   }
 
   public async createProject(body: CreateProjectDto): Promise<Project> {
@@ -46,11 +46,10 @@ export class ProjectService {
       return Promise.reject("Project does not exist");
   }
 
-  public async switchPos(srcPos: number, destPost: number, projectId: number, todo_service: TodoService): Promise<Project> {
+  public async switchPos(srcPos: number, destPost: number, projectId: number, todo_service: TodoService): Promise<Todo[]> {
     const project = await this.repository.findOneBy({ id: projectId });
     if (project) {
-      await todo_service.switchPos(srcPos, destPost, projectId);
-      return await this.repository.findOne({where: {id: projectId}, relations: ["todos"] });
+      return await todo_service.switchPos(srcPos, destPost, projectId);
     } else
       return Promise.reject("Poject does not exist");
   }

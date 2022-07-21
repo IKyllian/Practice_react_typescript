@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import {DragDropContext, Droppable } from 'react-beautiful-dnd'
 import ImageBackgroundDark from "../../Images/Todo-App/bg-desktop-dark.jpg"
 import ImageBackgroundLight from "../../Images/Todo-App/bg-desktop-light.jpg"
@@ -8,12 +8,12 @@ import { RootState } from '../../Redux/Store'
 import { useAppDispatch, useAppSelector } from '../../Redux/Hooks'
 import { useParams, Navigate } from "react-router-dom"
 
-
-function TodoApp(props: any) {
+function TodoApp() {
     const [newTodo, setNewTodo] = useState<string>("");
     const [newTodoActive, setNewTodoActive] = useState<boolean>(false);
     const [theme, setTheme] = useState<string>("dark");
     const [filter, setFilter] = useState<string | null>("all");
+    const [loadTodos, setLoadTodos] = useState<boolean>(false);
 
     const userDatas: User =  useAppSelector((state: RootState) => state.user);
     let projectId: number = Number(useParams().projectId);
@@ -21,10 +21,10 @@ function TodoApp(props: any) {
     const projectDatas : Project | undefined = userDatas.projects.find(elem => elem.id == projectId);
     const dispatch = useAppDispatch();
 
-    const handleSubmit = (event: React.SyntheticEvent): void => {
+    const handleSubmit = async (event: React.SyntheticEvent): Promise<void> => {
         event.preventDefault();
         if (newTodo != "" && (projectDatas!.todos.filter((element: TodoDatas) => element.content === newTodo)).length <= 0) {
-            fetch(`http://localhost:3000/project/addTodo/${projectId}`, {    
+            await fetch(`http://localhost:3000/project/addTodo/${projectId}`, {    
             method: 'POST',
             body: JSON.stringify({
                 content: newTodo,
@@ -57,9 +57,9 @@ function TodoApp(props: any) {
         }
     }
 
-    const handleActive: Function = (index: number): void => {
+    const handleActive: Function = async (index: number): Promise<void> => {
         const activeStatus: boolean = !projectDatas!.todos[index].isActive;
-        fetch(`http://localhost:3000/todo/updateActiveStatus/${projectDatas!.todos[index].id}`, {    
+        await fetch(`http://localhost:3000/todo/updateActiveStatus/${projectDatas!.todos[index].id}`, {    
             method: 'POST',
             body: JSON.stringify({
                 status: activeStatus,
@@ -87,9 +87,9 @@ function TodoApp(props: any) {
         })
     }
 
-    const handleComplete: Function = (index: number): void => {
+    const handleComplete: Function = async (index: number): Promise<void> => {
         const completeStatus: boolean = !projectDatas!.todos[index].isComplete;
-        fetch(`http://localhost:3000/todo/updateCompleteStatus/${projectDatas!.todos[index].id}`, {    
+        await fetch(`http://localhost:3000/todo/updateCompleteStatus/${projectDatas!.todos[index].id}`, {    
             method: 'POST',
             body: JSON.stringify({
                 status: completeStatus,
@@ -121,8 +121,8 @@ function TodoApp(props: any) {
         return projectDatas!.todos.filter((element: TodoDatas) => element.isComplete == false).length;
     }
 
-    const removeCompletedElements = (): void => {
-        fetch(`http://localhost:3000/todo/deleteCompletedTodo/${projectId}`, {    
+    const removeCompletedElements = async (): Promise<void> => {
+        await fetch(`http://localhost:3000/todo/deleteCompletedTodo/${projectId}`, {    
             method: 'DELETE',
         })
         .then((response) => {
@@ -159,10 +159,8 @@ function TodoApp(props: any) {
         }
     }
 
-    const removeItem = (index: number): void => {
-        console.log(projectDatas!.todos[index].id);
-        console.log(projectId);
-        fetch(`http://localhost:3000/todo/deleteTodo/${projectDatas!.todos[index].id}`, {    
+    const removeItem = async (index: number): Promise<void> => {
+        await fetch(`http://localhost:3000/todo/deleteTodo/${projectDatas!.todos[index].id}`, {    
             method: 'DELETE',
             body: JSON.stringify({
                 projectId: projectId,
@@ -189,13 +187,11 @@ function TodoApp(props: any) {
         })
     }
 
-    const reorderItems = (sourceIdx: number, destIdx: number | undefined):void => {
+    const reorderItems = async (sourceIdx: number, destIdx: number | undefined): Promise<void> => {
         if (destIdx == undefined)
             return ;
-        // let newArray: TodoDatas[] = [...todos];
-        // newArray.splice(destIdx, 0, newArray.splice(sourceIdx, 1)[0]);
-        // setTodos(newArray);
-        fetch(`http://localhost:3000/project/switchTodosPos/${userDatas.id}`, {    
+        console.log("Reorder function");
+        await fetch(`http://localhost:3000/project/switchTodosPos/${userDatas.id}`, {    
             method: 'POST',
             body: JSON.stringify({
                 srcPos: sourceIdx,
@@ -208,7 +204,7 @@ function TodoApp(props: any) {
         .then((response) => {
             return response.json();
         })
-        .then((datas: User) => {
+        .then((datas: Project) => {
             console.log(datas);
             dispatch({
                 type: "user/replaceTodosArray",
@@ -222,12 +218,36 @@ function TodoApp(props: any) {
             console.log(err);
         })
     }
+
+    useEffect(() => {
+        fetch(`http://localhost:3000/todo/getTodosByProjectId/${projectId}`, {    
+            method: 'GET',
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((datas: Project) => {
+            console.log(datas);
+            dispatch({
+                type: "user/replaceTodosArray",
+                payload: {
+                    projectIdx: projectIndex,
+                    newTodosArray: datas,
+                }
+            })
+            setLoadTodos(true);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }, []);
     
     if (userDatas.id == null || projectDatas == undefined) {
         return (
             <Navigate replace to="/" />
         )
     } else {
+        console.log("Return");
         return (
             <div className={`todo-page-container todo-page-container-${theme}`}>
                 <img className='todo-img' src={theme === "dark" ? ImageBackgroundDark : ImageBackgroundLight} alt="first img"></img>
@@ -256,30 +276,39 @@ function TodoApp(props: any) {
                                     </label>
                                 </form>
                             </li>
-                            <DragDropContext onDragEnd={(result) => reorderItems(result.source.index, result.destination?.index)}>
-                                <Droppable droppableId="droppable-1">
-                                    {(provided) => {
-                                        return (
-                                            <div
-                                                {...provided.droppableProps}
-                                                ref={provided.innerRef}
-                                            >  
-                                                {displayTodoList()}
-                                                {provided.placeholder}
-                                            </div>
-                                        );
-                                    }}
-                                </Droppable>
-                             </DragDropContext>
-                            <li className={`footer-list li-${theme}`}>
-                                <p> {itemsLeft()} items left </p>
-                                <div className='filters'>
-                                    <p className={`${filter === "all" ? "filter-active" : ""}`} onClick={() => setFilter("all")}>All</p>
-                                    <p className={`${filter === "active" ? "filter-active" : ""}`} onClick={() => setFilter("active")}> Active </p>
-                                    <p className={`${filter === "completed" ? "filter-active" : ""}`} onClick={() => setFilter("completed")}> Completed </p>
-                                </div>
-                                <p onClick={removeCompletedElements}> Clear Completed </p>
-                            </li>
+                            {
+                                loadTodos == true ? 
+                                <Fragment>
+                                    <DragDropContext onDragEnd={(result) => reorderItems(result.source.index, result.destination?.index)}>
+                                        <Droppable droppableId="droppable-1">
+                                            {(provided) => {
+                                                return (
+                                                    <div
+                                                        {...provided.droppableProps}
+                                                        ref={provided.innerRef}
+                                                    >  
+                                                        {displayTodoList()}
+                                                        {provided.placeholder}
+                                                    </div>
+                                                );
+                                            }}
+                                        </Droppable>
+                                    </DragDropContext>
+                                    <li className={`footer-list li-${theme}`}>
+                                        <p> {itemsLeft()} items left </p>
+                                        <div className='filters'>
+                                            <p className={`${filter === "all" ? "filter-active" : ""}`} onClick={() => setFilter("all")}>All</p>
+                                            <p className={`${filter === "active" ? "filter-active" : ""}`} onClick={() => setFilter("active")}> Active </p>
+                                            <p className={`${filter === "completed" ? "filter-active" : ""}`} onClick={() => setFilter("completed")}> Completed </p>
+                                        </div>
+                                        <p onClick={removeCompletedElements}> Clear Completed </p>
+                                    </li>
+                                </Fragment>
+                                :
+                                <h3 style={{textAlign: "center", margin: "1em 0"}}> Loading datas ... </h3>
+                            }
+                            
+                            
                         </ul>
                     </div>
                     <p className='footer'> Drag and drop to reorder list </p>

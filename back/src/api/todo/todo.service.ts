@@ -14,17 +14,22 @@ export class TodoService {
     return await this.repository.find();
   }
 
+  public async getTodosByProjectId(projectId: number): Promise<Todo[]> {
+    return await this.repository.find({where: {project: {id: projectId}}, order: {pos: "ASC"}});
+  }
+
+  public async updatePos(todoId: number, newPos: number): Promise<any> {
+    return await this.repository.update(todoId, {pos: newPos});
+  }
+
   public async reorderAfterDelete(projectId: number, pos: number): Promise<Todo> {
-    return this.repository.find({relations: ['project'] , where: {project: {id: projectId}}}).then((todos: Todo[]) => {
+    return this.repository.find({relations: ['project'] , where: {project: {id: projectId}}}).then(async (todos: Todo[]) => {
         if (todos.length > 0) {
-          todos.forEach(async(elem: Todo) => {
-              if (elem.pos > pos) {
-                await this.repository.findOneBy({id: elem.id}).then(async (todo: Todo) => {
-                  todo.pos -= 1;
-                  return await this.repository.save(todo);
-                })
-              }
-          })
+          for (const todo of todos) {
+            if (todo.pos > pos) {
+              await this.updatePos(todo.id, todo.pos - 1);
+            }
+          }
         } else
           return Promise.reject("No Projects");
     })
@@ -55,7 +60,7 @@ export class TodoService {
       if (elem != null) {
         await this.repository.delete({id: elem.id});
         await this.reorderAfterDelete(projectId, elem.pos);
-        return this.repository.find({relations: ['project'], where: {project: {id: projectId}}})
+        return this.repository.find({relations: ['project'], where: {project: {id: projectId}}, order: {pos: "ASC"}})
       } else
         return Promise.reject("Project does not exist");
     }).catch((err) => { return Promise.reject("Project does not exist"); });
@@ -66,35 +71,27 @@ export class TodoService {
       for (const todo of todos) {
         await this.deleteTodo(projectId, todo.id);
       }
-      return await this.repository.find({relations: ['project'], where: {project: {id: projectId}}});
+      return await this.repository.find({relations: ['project'], where: {project: {id: projectId}}, order: {pos: "ASC"}});
     }).catch((err: any) => { return Promise.reject("Project does not exist") });
   }
 
   public async switchPos(srcPos: number, destPos: number, projectId: number): Promise<Todo[]> {
-    return await this.repository.find({relations: ['project'], where: {project: {id: projectId}}}).then(async (todos: Todo[]) => {
-      if (todos.length > 1) {
-        todos.forEach(async (elem: Todo) => {
-            if (srcPos > destPos && elem.pos >= destPos && elem.pos < srcPos) {
-              await this.repository.findOneBy({id: elem.id}).then(async (todo: Todo) => {
-                todo.pos += 1;
-                await this.repository.save(todo);
-              })
+    const srcTodo = await this.repository.findOneBy({pos: srcPos});
+    if (srcTodo) {
+      return await this.repository.find({relations: ['project'], where: {project: {id: projectId}}}).then(async (todos: Todo[]) => {
+        if (todos.length > 1) {
+          for (const todo of todos) {
+            if (srcPos > destPos && todo.pos >= destPos && todo.pos < srcPos) {
+              await this.updatePos(todo.id, todo.pos + 1);
+            } else if (srcPos < destPos && todo.pos <= destPos && todo.pos > srcPos) {
+              await this.updatePos(todo.id, todo.pos - 1);
             }
-            else if (srcPos < destPos && elem.pos <= destPos && elem.pos > srcPos) {
-              await this.repository.findOneBy({id: elem.id}).then(async (todo: Todo) => {
-                todo.pos -= 1;
-                await this.repository.save(todo);
-              })
-            }
-        })
-        await this.repository.findOneBy({pos: srcPos}).then(async (todo: Todo) => {
-          if (todo == null || todo == undefined)
-            return false;
-          todo.pos = destPos;
-          await this.repository.save(todo);
-        })
-        return await this.repository.find({relations: ['project'], where: {project: {id: projectId}}});
-      }
-    }).catch((err: any) => { return Promise.reject("Project does not exist")});
+          }
+          await this.updatePos(srcTodo.id, destPos);
+          return await this.repository.find({relations: ['project'], where: {project: {id: projectId}}, order: {pos: "ASC"}});
+        }
+      }).catch((err: any) => { return Promise.reject("Project does not exist")});
+    } else
+      return Promise.reject("Error: No src todo");
   }
 }

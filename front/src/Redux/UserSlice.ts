@@ -32,25 +32,23 @@ export const userSlice = createSlice({
             state.projects = action.payload;
             return state;
         },
-        addTodo: (state, action) => {            
-            state.projects[action.payload.projectIdx].todos.push(action.payload.todo);
+        addTodo: (state, action) => {   
+            if (state.projects.length > 0)         
+                state.projects[action.payload.projectIdx].todos.push(action.payload.todo);
             return state;
         },
         replaceTodosArray: (state, action) => {
-            state.projects[action.payload.projectIdx].todos = action.payload.newTodosArray;
-            return state;
-        },
-        reorderTodos: (state, action) => {
-            state.projects[action.payload.index].todos.sort((a: TodoDatas, b: TodoDatas) => {
-                return a.pos - b.pos;
-            });
+            if (state.projects.length > 0)
+                state.projects[action.payload.projectIdx].todos = action.payload.newTodosArray;
             return state;
         },
         changeActiveStatus: (state, action) => {
-            state.projects[action.payload.projectIdx].todos[action.payload.todoIdx].isActive = action.payload.status;
+            if (state.projects.length > 0 && state.projects[action.payload.projectIdx].todos.length > 0)
+                state.projects[action.payload.projectIdx].todos[action.payload.todoIdx].isActive = action.payload.status;
         },
         changeCompleteStatus: (state, action) => {
-            state.projects[action.payload.projectIdx].todos[action.payload.todoIdx].isComplete = action.payload.status;
+            if (state.projects.length > 0 && state.projects[action.payload.projectIdx].todos.length > 0)
+                state.projects[action.payload.projectIdx].todos[action.payload.todoIdx].isComplete = action.payload.status;
         },
     }
 });

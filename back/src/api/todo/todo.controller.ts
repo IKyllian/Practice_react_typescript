@@ -16,6 +16,11 @@ export class TodoController {
     return await this.service.getTodos();
   }
 
+  @Get('getTodosByProjectId/:id')
+  public async getTodosByProjectId( @Param('id', ParseIntPipe) projectId: number): Promise<Todo[]> {
+    return await this.service.getTodosByProjectId(projectId);
+  }
+
   @Post('updateActiveStatus/:id')
   public async updateActiveStatus(@Body() body: {status: boolean}, @Param('id', ParseIntPipe) id: number): Promise<any> {
     return await this.service.updateActiveStatus(body.status, id);
