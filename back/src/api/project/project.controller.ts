@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
-import { CreateProjectDto } from './project.dto';
+import { CreateProjectDto, CreateInviteDto } from './project.dto';
 import { CreateTodoDto } from '../todo/todo.dto';
-import { Project } from './project.entity';
+import { Invites, Project } from './project.entity';
 import { ProjectService } from './project.service';
 import { TodoService } from '../todo/todo.service';
 import { Todo } from '../todo/todo.entity';
@@ -30,7 +30,7 @@ export class ProjectController {
   }
 
   @Post('create')
-  public async createUser(@Body() body: CreateProjectDto): Promise<Project> {
+  public async createProject(@Body() body: CreateProjectDto): Promise<Project> {
     return await this.service.createProject(body);
   }
 
@@ -42,5 +42,10 @@ export class ProjectController {
   @Post('switchTodosPos/:id')
   public async switchPos(@Body() body: posType, @Param('id', ParseIntPipe) userId: number): Promise<Todo[]> {
     return await this.service.switchPos(body.srcPos, body.destPos, userId, this.todo_service);
+  }
+
+  @Post('createInvite')
+  public async createInvite(@Body() body: CreateInviteDto): Promise<Invites> {
+    return await this.service.createInvite(body);
   }
 }

@@ -172,9 +172,14 @@
             font-size: 10px;
             color: $DarkGrayishBlue;
         }
-    }
+    }   
+}
+
+.modal-todos-params-container {
+    position: absolute;
     
 }
+
 
 @media screen and (max-width: 620px) {
 	.todo-page-container {

@@ -7,5 +7,16 @@ export class CreateProjectDto {
 
   @IsNumber()
   userId: number;
+}
 
+export class CreateInviteDto {
+  @IsNumber()
+  projectId: number;
+
+  @IsNumber()
+  senderId: number;
+
+  @IsString()
+  @IsNotEmpty()
+  receiver: string;
 }

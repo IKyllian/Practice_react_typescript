@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateProjectDto } from './project.dto';
+import { CreateProjectDto, CreateInviteDto } from './project.dto';
 import { CreateTodoDto } from '../todo/todo.dto';
 import { TodoService } from '../todo/todo.service';
-import { Project } from './project.entity';
+import { Invites, Project } from './project.entity';
 import { User } from '../user/user.entity';
 import { Todo } from '../todo/todo.entity';
+import { reverse } from 'dns';
 
 @Injectable()
 export class ProjectService {
@@ -14,6 +15,8 @@ export class ProjectService {
   private readonly repository: Repository<Project>;
   @InjectRepository(User)
   private readonly user_repository: Repository<User>;
+  // @InjectRepository(Invites)
+  // private readonly invite_repository: Repository<Invites>;
 
   public async getAllProjects(): Promise<Project[]> {
     return await this.repository.find({relations: ["users", "todos"]});
@@ -52,5 +55,26 @@ export class ProjectService {
       return await todo_service.switchPos(srcPos, destPost, projectId);
     } else
       return Promise.reject("Poject does not exist");
+  }
+
+  public async createInvite(body: CreateInviteDto): Promise<Invites> {
+  //   const project = await this.repository.findOneBy({id: body.projectId});
+  //   const sender = await this.user_repository.findOneBy({id: body.senderId});
+  //   const receiver = await this.user_repository.findOneBy({username: body.receiver});
+  //   if (project && sender) {
+  //     if (receiver) {
+  //       const invite: Invites = new Invites();
+
+  //       invite.project = project;
+  //       invite.sender = sender;
+  //       invite.receiver = receiver;
+
+  //       return await this.invite_repository.save(invite);
+  //     } else
+  //       return Promise.reject("No receiver");
+  //   } else
+  //     return Promise.reject("No project or sender");
+
+      return Promise.reject("No project or sender");
   }
 }
